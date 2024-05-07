@@ -47,6 +47,13 @@ app.MapGet("/api/tasks/{taskId}", async (int taskId) =>
     .WithName("GetTaskInformation")
     .WithOpenApi();
 
+app.MapDelete("/api/tasks/{taskId}", async (int taskId) =>
+    {
+        await controller.DeleteTask(taskId);
+    })
+    .WithName("GetTaskInformation")
+    .WithOpenApi();
+
 app.MapDelete("/api/project/{projectId}", async (int projectId) =>
     {
         await controller.DeleteProject(projectId);

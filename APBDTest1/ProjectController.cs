@@ -31,6 +31,13 @@ public class ProjectController
         return new TaskInfo((string)reader[0], (string)reader[1], (DateTime)reader[2], (string)reader[3],
             (string)reader[4]);
     }
+    
+    public async Task DeleteTask(int idTask)
+    {
+        await using SqlCommand command = new SqlCommand("DELETE FROM Task WHERE IdTask = @IdTask", this._connection);
+        command.Parameters.AddWithValue("@IdTask", idTask);
+        await command.ExecuteNonQueryAsync();
+    }
 
     public async Task<TeamMemberInfo?> GetMemberInfo(int idTeamMember)
     {
