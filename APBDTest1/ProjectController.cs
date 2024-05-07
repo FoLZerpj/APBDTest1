@@ -31,7 +31,34 @@ public class ProjectController
         return new TaskInfo((int)reader[0], (string)reader[1], (string)reader[2], (DateTime)reader[3], (int)reader[4],
             (string)reader[5], (int)reader[6],
             (int)reader[7]);
-    } 
-    
-    //public async Task<TeamMemberInfo?> 
+    }
+
+    public async Task<TeamMemberInfo?> GetMemberInfo(int idTeamMember)
+    {
+        List<TaskInfo> tasks = new List<TaskInfo>();
+        await using (SqlCommand command = new SqlCommand("SELECT IdTask, Task.Name, Description, Deadline, IdProject, TaskType.Name, IdAssignedTo, IdCreator FROM Task JOIN TaskType ON Task.IdTaskType = TaskType.IdTaskType WHERE IdAssignedTo = @IdAssignedTo ORDER BY DeadLine DESC", this._connection))
+        {
+            command.Parameters.AddWithValue("@IdAssignedTo", idTeamMember);
+            await using SqlDataReader reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                tasks.Add(new TaskInfo((int)reader[0], (string)reader[1], (string)reader[2], (DateTime)reader[3],
+                    (int)reader[4],
+                    (string)reader[5], (int)reader[6],
+                    (int)reader[7]));
+            }
+        }
+
+        await using (SqlCommand command = new SqlCommand("SELECT FirstName, LastName, Email FROM TeamMember WHERE IdTeamMember = @IdTeamMember", this._connection))
+        {
+            command.Parameters.AddWithValue("@IdTeamMember", idTeamMember);
+            await using SqlDataReader reader = await command.ExecuteReaderAsync();
+            if (!await reader.ReadAsync())
+            {
+                return null;
+            }
+
+            return new TeamMemberInfo((string)reader[0], (string)reader[1], (string)reader[2], tasks);
+        }
+    }
 }

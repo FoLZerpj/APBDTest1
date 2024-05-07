@@ -23,7 +23,13 @@ var controller = await ProjectController.Create(connectionString);
 
 app.MapGet("/api/member/{memberId}", async (int memberId) =>
     {
-        
+        var member = await controller.GetMemberInfo(memberId);
+        if (member == null)
+        {
+            return TypedResults.NotFound("Member with specified memberId wasn't found");
+        }
+
+        return (IResult)TypedResults.Ok(member);
     })
     .WithName("GetTeamMemberInformation")
     .WithOpenApi();
