@@ -49,7 +49,7 @@ app.MapGet("/api/tasks/{taskId}", async (int taskId) =>
 
 app.MapDelete("/api/project/{projectId}", async (int projectId) =>
     {
-        
+        await controller.DeleteProject(projectId);
     })
     .WithName("DeleteProject")
     .WithOpenApi();

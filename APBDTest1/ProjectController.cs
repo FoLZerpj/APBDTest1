@@ -72,4 +72,14 @@ public class ProjectController
             return new TeamMemberInfo((string)reader[0], (string)reader[1], (string)reader[2], assignedTasks, createdTasks);
         }
     }
+
+    public async Task DeleteProject(int idProject)
+    {
+        await using SqlCommand command = new SqlCommand("BEGIN TRANSACTION;" +
+                                                        "DELETE FROM Task WHERE IdProject = @IdProject;" +
+                                                        "DELETE FROM Project WHERE IdProject = @IdProject;" +
+                                                        "COMMIT;", this._connection);
+        command.Parameters.AddWithValue("@IdProject", idProject);
+        await command.ExecuteNonQueryAsync();
+    }
 }
