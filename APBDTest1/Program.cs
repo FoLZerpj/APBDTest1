@@ -1,3 +1,5 @@
+using APBDTest1;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,12 +19,33 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 const string connectionString = "Server=(localdb)\\MSSQLLocalDB";
+var controller = await ProjectController.Create(connectionString);
 
-app.MapGet("/member/{memberId}", (int memberId) =>
+app.MapGet("/api/member/{memberId}", async (int memberId) =>
     {
         
     })
     .WithName("GetTeamMemberInformation")
+    .WithOpenApi();
+
+app.MapGet("/api/tasks/{taskId}", async (int taskId) =>
+    {
+        var task = await controller.GetTask(taskId);
+        if (task == null)
+        {
+            return TypedResults.NotFound("Task with specified taskId wasn't found");
+        }
+
+        return (IResult)TypedResults.Ok(task);
+    })
+    .WithName("GetTaskInformation")
+    .WithOpenApi();
+
+app.MapDelete("/api/project/{projectId}", async (int projectId) =>
+    {
+        
+    })
+    .WithName("DeleteProject")
     .WithOpenApi();
 
 app.Run();
