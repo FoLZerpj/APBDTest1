@@ -2,9 +2,9 @@
 
 namespace APBDTest1;
 
-public class ProjectController
+public class ProjectController: IProjectController
 {
-    private SqlConnection _connection;
+    private readonly SqlConnection _connection;
     
     private ProjectController(string connectionString)
     {
@@ -18,7 +18,7 @@ public class ProjectController
         return controller;
     }
 
-    public async Task<TaskInfo?> GetTask(int idTask)
+    public async Task<TaskInfo?> GetTaskAsync(int idTask)
     {
         await using SqlCommand command = new SqlCommand("SELECT Task.Name, Description, Task.Deadline, Project.Name, TaskType.Name FROM Task JOIN TaskType ON Task.IdTaskType = TaskType.IdTaskType JOIN Project ON Task.IdProject = Project.IdProject WHERE IdTask = @IdTask", this._connection);
         command.Parameters.AddWithValue("@IdTask", idTask);
@@ -32,14 +32,14 @@ public class ProjectController
             (string)reader[4]);
     }
     
-    public async Task DeleteTask(int idTask)
+    public async Task DeleteTaskAsync(int idTask)
     {
         await using SqlCommand command = new SqlCommand("DELETE FROM Task WHERE IdTask = @IdTask", this._connection);
         command.Parameters.AddWithValue("@IdTask", idTask);
         await command.ExecuteNonQueryAsync();
     }
 
-    public async Task<TeamMemberInfo?> GetMemberInfo(int idTeamMember)
+    public async Task<TeamMemberInfo?> GetMemberInfoAsync(int idTeamMember)
     {
         List<TaskInfo> assignedTasks = new List<TaskInfo>();
         await using (SqlCommand command = new SqlCommand("SELECT Task.Name, Description, Task.Deadline, Project.Name, TaskType.Name FROM Task JOIN TaskType ON Task.IdTaskType = TaskType.IdTaskType JOIN Project ON Task.IdProject = Project.IdProject WHERE IdAssignedTo = @IdAssignedTo ORDER BY DeadLine DESC", this._connection))
@@ -80,7 +80,7 @@ public class ProjectController
         }
     }
 
-    public async Task DeleteProject(int idProject)
+    public async Task DeleteProjectAsync(int idProject)
     {
         await using SqlCommand command = new SqlCommand("BEGIN TRANSACTION;" +
                                                         "DELETE FROM Task WHERE IdProject = @IdProject;" +

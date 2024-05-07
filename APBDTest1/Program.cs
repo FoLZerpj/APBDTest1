@@ -19,11 +19,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 const string connectionString = "Server=(localdb)\\MSSQLLocalDB";
-var controller = await ProjectController.Create(connectionString);
+IProjectController controller = await ProjectController.Create(connectionString);
 
 app.MapGet("/api/member/{memberId}", async (int memberId) =>
     {
-        var member = await controller.GetMemberInfo(memberId);
+        var member = await controller.GetMemberInfoAsync(memberId);
         if (member == null)
         {
             return TypedResults.NotFound("Member with specified memberId wasn't found");
@@ -36,7 +36,7 @@ app.MapGet("/api/member/{memberId}", async (int memberId) =>
 
 app.MapGet("/api/tasks/{taskId}", async (int taskId) =>
     {
-        var task = await controller.GetTask(taskId);
+        var task = await controller.GetTaskAsync(taskId);
         if (task == null)
         {
             return TypedResults.NotFound("Task with specified taskId wasn't found");
@@ -49,14 +49,14 @@ app.MapGet("/api/tasks/{taskId}", async (int taskId) =>
 
 app.MapDelete("/api/tasks/{taskId}", async (int taskId) =>
     {
-        await controller.DeleteTask(taskId);
+        await controller.DeleteTaskAsync(taskId);
     })
     .WithName("GetTaskInformation")
     .WithOpenApi();
 
 app.MapDelete("/api/project/{projectId}", async (int projectId) =>
     {
-        await controller.DeleteProject(projectId);
+        await controller.DeleteProjectAsync(projectId);
     })
     .WithName("DeleteProject")
     .WithOpenApi();
