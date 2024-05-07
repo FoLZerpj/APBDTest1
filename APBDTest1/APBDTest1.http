@@ -1,6 +1,15 @@
 @APBDTest1_HostAddress = http://localhost:5097
 
-GET {{APBDTest1_HostAddress}}/weatherforecast/
+GET {{APBDTest1_HostAddress}}/api/member/1
+Accept: application/json
+
+GET {{APBDTest1_HostAddress}}/api/tasks/1
+Accept: application/json
+
+DELETE {{APBDTest1_HostAddress}}/api/tasks/10
+Accept: application/json
+
+DELETE {{APBDTest1_HostAddress}}/api/project/1
 Accept: application/json
 
 ###
